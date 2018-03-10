@@ -51,7 +51,7 @@ class BotHandler(object):
         self.action = Actions.NOT_SET
 
     def insert_reminder(self, bot, update):
-        bot.send_message(chat_id=update.message.chat_id, text="Please insert the two lists with ; to separate them")
+        bot.send_message(chat_id=update.message.chat_id, text="Please insert the two lists with ; to separate them.")
         bot.send_message(chat_id=update.message.chat_id, text="Example: key1, key2, key3 ; reminder1, reminder2")
         self.action = Actions.INSERT_TO_DB
 
@@ -66,11 +66,11 @@ class BotHandler(object):
         bot.send_message(chat_id=update.message.chat_id,
                          text="This is a reminder bot.\nTo insert to reminder please enter /insert and press enter.\n")
         bot.send_message(chat_id=update.message.chat_id,
-                         text="next message will be a list of words to initiate reminder, then ; and then list of words to reminde off")
+                         text="Next message should be a list of words to initiate reminder (keys), then ; (to sperate the lists) followed by list of words to reminde off (reminders).")
         bot.send_message(chat_id=update.message.chat_id,
                          text="To see all the reminders inserted to bot, please enter /show and press enter.\n")
         bot.send_message(chat_id=update.message.chat_id,
-                         text="To Delete reminder by ID, please enter /delete and press enter..\n")
+                         text="To Delete reminder by ID, please enter /delete and press enter.\n")
 
     def insert_to_queue(self, message_time, chat_id, text, flag):
         print('insert in queue: ' + text)

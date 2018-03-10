@@ -2,9 +2,11 @@ import csv
 import os
 
 
-class DBManger(object):
+class DBManger():
     def __init__(self):
         self.filename = "reminderDB.csv"
+        if not(os.path.exists(self.filename)):
+            open(self.filename, 'a').close()
         if self.is_empty():
             self.id = 1
         else:
@@ -60,13 +62,6 @@ class DBManger(object):
                     return_id = line[0]
         return int(return_id) + 1
 
-    def return_reminder(self, line):
-        # return only the reminder part of the line
-        reminders = []
-        index = line.index(";")
-        for i in range(index + 1, len(line)):
-            reminders.append(line[i])
-        return reminders
 
     def return_table(self, chat_id):
         table = "Reminders table:\n"
@@ -81,7 +76,7 @@ class DBManger(object):
                         if i != ';':
                             table += i + ' '
                         if i == ';':
-                            table += " reminder are: "
+                            table += " reminders are: "
                     table += '\n'
         return table
 
@@ -105,3 +100,4 @@ class DBManger(object):
             os.remove(self.filename)
             os.rename('temp.csv', self.filename)
         return id_found
+

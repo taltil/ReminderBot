@@ -1,10 +1,10 @@
-from DBManger import *
+
 from Actions import *
 
 
-class MessageProcessor(DBManger):
-    def __init__(self, message_list, outputQueue):
-        DBManger.__init__(self)
+class MessageProcessor():
+    def __init__(self, db, message_list, outputQueue):
+        self.db=db
         self.outputQueue = outputQueue
         print('starting message processor')
         self.preform_action(message_list)
@@ -38,28 +38,33 @@ class MessageProcessor(DBManger):
     def find_word(self, word):
         # find word in the db
         reminders = []
-        reminder_line = DBManger.find_line(self, self.chat_id, word)
+        reminder_line = self.db.find_line( self.chat_id, word)
         if len(reminder_line) > 0:
             reminders = self.return_reminder(reminder_line)
         return reminders
 
     def return_reminder(self, line):
-        return DBManger.return_reminder(self, line)
+        # return only the reminder part of the line
+        reminders = []
+        index = line.index(";")
+        for i in range(index + 1, len(line)):
+            reminders.append(line[i])
+        return reminders
 
     def add_reminder_to_db(self, chat_id, message):
         if len(message) == 0:
-            self.outputQueue.put(['error: no message insert!', chat_id])
+            self.outputQueue.put(['Error: no message insert!', chat_id])
             return
         message = message.split(';')
         if len(message) != 2:
-            self.outputQueue.put(['error: exactly one ; should be insert!', chat_id])
+            self.outputQueue.put(['Error: exactly one ; should be insert!', chat_id])
             return
         if len(message[0]) == 0 or len(message[1]) == 0:
-            self.outputQueue.put(['error: keys or reminders are missing!'.chat_id])
+            self.outputQueue.put(['Error: keys or reminders are missing!'.chat_id])
             return
         key_list = message[0].split(',')
         reminder_list = message[1].split(',')
-        DBManger.add_line(self, chat_id, key_list, reminder_list)
+        self.db.add_line(chat_id, key_list, reminder_list)
         self.outputQueue.put(['New reminder was successfully added.', chat_id])
 
     def create_reminder_text(self, reminder_dic):
@@ -71,10 +76,10 @@ class MessageProcessor(DBManger):
         return text
 
     def return_table(self, chat_id):
-        return DBManger.return_table(self, chat_id)
+        return  self.db.return_table( chat_id)
 
     def delete_reminder(self, chat_id, line_id):
-        if DBManger.delete_line(self, chat_id, line_id):
+        if  self.db.delete_line( chat_id, line_id):
             self.outputQueue.put(['Reminder was successfully deleted.', chat_id])
         else:
-            self.outputQueue.put(['Error: id is not valid or not exist.\n Please try again.', chat_id])
+            self.outputQueue.put(['Error: id is not valid or not exist.\nPlease try again.', chat_id])
